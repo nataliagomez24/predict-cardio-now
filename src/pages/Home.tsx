@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { HeartPulse, Upload, ChartBar, AlertCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import HeartMonitorImage from "../assets/heart-monitor.svg";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -22,7 +23,7 @@ const Home = () => {
 
       <div className="max-w-3xl mx-auto">
         <img 
-          src="/src/assets/heart-monitor.svg" 
+          src={HeartMonitorImage} 
           alt="Monitor cardíaco" 
           className="w-full h-24 object-contain my-6"
         />
