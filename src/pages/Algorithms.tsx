@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -14,6 +13,24 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AlgorithmComparison } from "@/components/charts/AlgorithmComparison";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
+import { 
+  Heart, 
+  Activity, 
+  Utensils, 
+  Check, 
+  X, 
+  ArrowRight, 
+  Medal,
+  CircleAlert 
+} from "lucide-react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { 
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 type AlgorithmData = {
   name: string;
@@ -380,37 +397,275 @@ const Algorithms = () => {
         <TabsContent value="report" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Recomendaciones basadas en el análisis</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <Heart className="h-5 w-5 text-cardio-primary" />
+                Recomendaciones personalizadas
+              </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <p>En base a los resultados del análisis de algoritmos y las predicciones realizadas, podemos ofrecer las siguientes recomendaciones:</p>
+            <CardContent className="space-y-6">
+              {predictionResult ? (
+                <>
+                  <div className={`p-4 rounded-lg border ${
+                    predictionResult.risk > 0.7 
+                      ? "bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800" 
+                      : predictionResult.risk > 0.4
+                        ? "bg-amber-50 border-amber-200 dark:bg-amber-900/20 dark:border-amber-800"
+                        : "bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-800"
+                  }`}>
+                    <h3 className="font-medium text-lg mb-2 flex items-center gap-2">
+                      {predictionResult.risk > 0.7 ? (
+                        <CircleAlert className="h-5 w-5 text-red-500" />
+                      ) : predictionResult.risk > 0.4 ? (
+                        <CircleAlert className="h-5 w-5 text-amber-500" />
+                      ) : (
+                        <Check className="h-5 w-5 text-green-500" />
+                      )}
+                      Evaluación de riesgo: {' '}
+                      <span className={`${
+                        predictionResult.risk > 0.7 ? "text-red-600 dark:text-red-400" : 
+                        predictionResult.risk > 0.4 ? "text-amber-600 dark:text-amber-400" : 
+                        "text-green-600 dark:text-green-400"
+                      }`}>
+                        {predictionResult.risk > 0.7 ? "Alto" : predictionResult.risk > 0.4 ? "Moderado" : "Bajo"}
+                      </span>
+                    </h3>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Basado en los datos proporcionados y analizados con el algoritmo {algorithmData[selectedAlgorithm].name}.
+                      Confianza de la predicción: {(predictionResult.confidence * 100).toFixed(1)}%.
+                    </p>
+                    <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                      <div 
+                        className={`h-2.5 rounded-full ${
+                          predictionResult.risk > 0.7 ? "bg-red-600" : 
+                          predictionResult.risk > 0.4 ? "bg-amber-500" : 
+                          "bg-green-500"
+                        }`} 
+                        style={{width: `${predictionResult.risk * 100}%`}} 
+                      ></div>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <h3 className="font-medium text-lg flex items-center gap-2">
+                      <Medal className="h-5 w-5 text-cardio-accent" />
+                      Plan de acción personalizado
+                    </h3>
+                    
+                    <Carousel className="w-full">
+                      <CarouselContent>
+                        <CarouselItem className="md:basis-1/2 lg:basis-1/3">
+                          <Card>
+                            <CardHeader className="pb-2">
+                              <CardTitle className="text-base flex items-center gap-2">
+                                <Utensils className="h-4 w-4 text-cardio-primary" />
+                                Alimentación
+                              </CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-2 text-sm">
+                              <ul className="list-disc pl-5 space-y-1">
+                                <li>Reduce el consumo de sodio a menos de 2,300mg por día</li>
+                                <li>Aumenta la ingesta de frutas y verduras (5 porciones diarias)</li>
+                                <li>Limita las grasas saturadas y trans</li>
+                                <li>Consume pescados ricos en omega-3 al menos dos veces por semana</li>
+                              </ul>
+                            </CardContent>
+                          </Card>
+                        </CarouselItem>
+                        
+                        <CarouselItem className="md:basis-1/2 lg:basis-1/3">
+                          <Card>
+                            <CardHeader className="pb-2">
+                              <CardTitle className="text-base flex items-center gap-2">
+                                <Activity className="h-4 w-4 text-cardio-accent" />
+                                Actividad física
+                              </CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-2 text-sm">
+                              <ul className="list-disc pl-5 space-y-1">
+                                <li>Realiza al menos 150 minutos de actividad aeróbica moderada semanalmente</li>
+                                <li>Incorpora ejercicios de fortalecimiento muscular 2 veces por semana</li>
+                                <li>Evita periodos prolongados de inactividad</li>
+                                <li>Camina al menos 30 minutos diarios</li>
+                              </ul>
+                            </CardContent>
+                          </Card>
+                        </CarouselItem>
+                        
+                        <CarouselItem className="md:basis-1/2 lg:basis-1/3">
+                          <Card>
+                            <CardHeader className="pb-2">
+                              <CardTitle className="text-base flex items-center gap-2">
+                                <Heart className="h-4 w-4 text-red-500" />
+                                Hábitos saludables
+                              </CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-2 text-sm">
+                              <ul className="list-disc pl-5 space-y-1">
+                                <li>Si fumas, busca ayuda para dejarlo</li>
+                                <li>Limita el consumo de alcohol</li>
+                                <li>Gestiona el estrés con técnicas de relajación</li>
+                                <li>Mantén un peso saludable (IMC entre 18.5-24.9)</li>
+                                <li>Asegúrate de dormir 7-8 horas diarias</li>
+                              </ul>
+                            </CardContent>
+                          </Card>
+                        </CarouselItem>
+                      </CarouselContent>
+                      <div className="hidden md:flex justify-end gap-2 mt-4">
+                        <CarouselPrevious />
+                        <CarouselNext />
+                      </div>
+                    </Carousel>
+                    
+                    <div className="mt-6">
+                      <h3 className="font-medium mb-2 flex items-center gap-2">
+                        <Activity className="h-5 w-5 text-cardio-primary" />
+                        Valores óptimos recomendados
+                      </h3>
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Indicador</TableHead>
+                            <TableHead>Valor objetivo</TableHead>
+                            <TableHead>Su valor</TableHead>
+                            <TableHead className="text-right">Estado</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          <TableRow>
+                            <TableCell>Presión arterial</TableCell>
+                            <TableCell>&lt;120/80 mmHg</TableCell>
+                            <TableCell>{predictionInputs.systolicBP}/{predictionInputs.diastolicBP} mmHg</TableCell>
+                            <TableCell className="text-right">
+                              {parseInt(predictionInputs.systolicBP) < 120 && parseInt(predictionInputs.diastolicBP) < 80 ? (
+                                <Check className="h-4 w-4 text-green-500 ml-auto" />
+                              ) : (
+                                <X className="h-4 w-4 text-red-500 ml-auto" />
+                              )}
+                            </TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell>Colesterol total</TableCell>
+                            <TableCell>&lt;200 mg/dL</TableCell>
+                            <TableCell>{predictionInputs.cholesterol} mg/dL</TableCell>
+                            <TableCell className="text-right">
+                              {parseInt(predictionInputs.cholesterol) < 200 ? (
+                                <Check className="h-4 w-4 text-green-500 ml-auto" />
+                              ) : (
+                                <X className="h-4 w-4 text-red-500 ml-auto" />
+                              )}
+                            </TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell>Glucosa en ayunas</TableCell>
+                            <TableCell>&lt;100 mg/dL</TableCell>
+                            <TableCell>{predictionInputs.glucose} mg/dL</TableCell>
+                            <TableCell className="text-right">
+                              {parseInt(predictionInputs.glucose) < 100 ? (
+                                <Check className="h-4 w-4 text-green-500 ml-auto" />
+                              ) : (
+                                <X className="h-4 w-4 text-red-500 ml-auto" />
+                              )}
+                            </TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell>IMC</TableCell>
+                            <TableCell>18.5-24.9</TableCell>
+                            <TableCell>{predictionInputs.bmi}</TableCell>
+                            <TableCell className="text-right">
+                              {parseFloat(predictionInputs.bmi) >= 18.5 && parseFloat(predictionInputs.bmi) < 25 ? (
+                                <Check className="h-4 w-4 text-green-500 ml-auto" />
+                              ) : (
+                                <X className="h-4 w-4 text-red-500 ml-auto" />
+                              )}
+                            </TableCell>
+                          </TableRow>
+                        </TableBody>
+                      </Table>
+                    </div>
+                    
+                    <div className="mt-6 border-t pt-4">
+                      <h3 className="font-medium mb-2">Factores de riesgo identificados</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        {parseInt(predictionInputs.age) > 60 && (
+                          <div className="flex items-center gap-2 p-2 border rounded-lg bg-red-50 border-red-200 dark:bg-red-900/10 dark:border-red-800/30">
+                            <CircleAlert className="h-4 w-4 text-red-500" />
+                            <span className="text-sm">Edad avanzada (mayor a 60 años)</span>
+                          </div>
+                        )}
+                        {parseInt(predictionInputs.systolicBP) > 130 && (
+                          <div className="flex items-center gap-2 p-2 border rounded-lg bg-red-50 border-red-200 dark:bg-red-900/10 dark:border-red-800/30">
+                            <CircleAlert className="h-4 w-4 text-red-500" />
+                            <span className="text-sm">Presión arterial elevada</span>
+                          </div>
+                        )}
+                        {parseInt(predictionInputs.cholesterol) > 200 && (
+                          <div className="flex items-center gap-2 p-2 border rounded-lg bg-red-50 border-red-200 dark:bg-red-900/10 dark:border-red-800/30">
+                            <CircleAlert className="h-4 w-4 text-red-500" />
+                            <span className="text-sm">Colesterol elevado</span>
+                          </div>
+                        )}
+                        {parseInt(predictionInputs.glucose) > 100 && (
+                          <div className="flex items-center gap-2 p-2 border rounded-lg bg-red-50 border-red-200 dark:bg-red-900/10 dark:border-red-800/30">
+                            <CircleAlert className="h-4 w-4 text-red-500" />
+                            <span className="text-sm">Glucosa elevada</span>
+                          </div>
+                        )}
+                        {parseFloat(predictionInputs.bmi) > 25 && (
+                          <div className="flex items-center gap-2 p-2 border rounded-lg bg-red-50 border-red-200 dark:bg-red-900/10 dark:border-red-800/30">
+                            <CircleAlert className="h-4 w-4 text-red-500" />
+                            <span className="text-sm">Sobrepeso/Obesidad</span>
+                          </div>
+                        )}
+                        {predictionInputs.smoking === "1" && (
+                          <div className="flex items-center gap-2 p-2 border rounded-lg bg-red-50 border-red-200 dark:bg-red-900/10 dark:border-red-800/30">
+                            <CircleAlert className="h-4 w-4 text-red-500" />
+                            <span className="text-sm">Tabaquismo</span>
+                          </div>
+                        )}
+                        {predictionInputs.physicalActivity === "0" && (
+                          <div className="flex items-center gap-2 p-2 border rounded-lg bg-red-50 border-red-200 dark:bg-red-900/10 dark:border-red-800/30">
+                            <CircleAlert className="h-4 w-4 text-red-500" />
+                            <span className="text-sm">Sedentarismo</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div className="text-center py-8">
+                  <p className="text-muted-foreground">
+                    Para obtener recomendaciones personalizadas, primero realiza una predicción en la pestaña "Predicción".
+                  </p>
+                  <Button 
+                    onClick={() => document.querySelector('[value="prediction"]')?.dispatchEvent(new Event('click'))} 
+                    className="mt-4 bg-cardio-primary hover:bg-cardio-dark"
+                  >
+                    Ir a Predicción
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </div>
+              )}
               
-              <h3 className="font-medium text-lg mt-4">Factores de riesgo más significativos</h3>
-              <ul className="list-disc pl-5 space-y-1">
-                <li>Edad avanzada (especialmente mayores de 60 años)</li>
-                <li>Presión arterial elevada (sistólica &gt; 140 mmHg)</li>
-                <li>Colesterol alto (&gt; 200 mg/dL)</li>
-                <li>Hábito tabáquico</li>
-                <li>Diabetes o niveles elevados de glucosa</li>
-                <li>Sobrepeso (IMC &gt; 25)</li>
-              </ul>
-              
-              <h3 className="font-medium text-lg mt-4">Recomendaciones médicas generales</h3>
-              <ul className="list-disc pl-5 space-y-1">
-                <li>Control periódico de presión arterial y perfil lipídico</li>
-                <li>Dieta equilibrada baja en sodio y grasas saturadas</li>
-                <li>Actividad física regular (mínimo 150 minutos semanales)</li>
-                <li>Abandono del hábito tabáquico</li>
-                <li>Control del estrés</li>
-              </ul>
-              
-              <div className="bg-cardio-light dark:bg-cardio-dark/20 p-4 rounded-lg border border-cardio-medium mt-4">
-                <h4 className="font-medium mb-2">Precisión del modelo</h4>
-                <p className="text-sm">
-                  El algoritmo Random Forest ha demostrado ser el más preciso para la predicción de 
-                  enfermedades cardiovasculares con un 92.3% de precisión. Le sigue J48 con 87.5% 
-                  y Naive Bayes con 83.7%.
+              <div className="border-t pt-4 mt-6">
+                <h3 className="font-medium text-lg mb-2">Precisión del modelo</h3>
+                <p className="text-sm mb-2">
+                  El algoritmo {algorithmData[selectedAlgorithm]?.name || "Random Forest"} ha demostrado ser el más preciso para la predicción de 
+                  enfermedades cardiovasculares con un {algorithmData[selectedAlgorithm]?.accuracy || "92.3"}% de precisión.
                 </p>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4">
+                  {Object.entries(algorithmData).map(([key, data]) => (
+                    <div key={key} className="flex items-center gap-2 border rounded-lg p-3">
+                      <div className="h-4 w-4 rounded-full" style={{ backgroundColor: data.color }}></div>
+                      <div className="text-sm">
+                        <p className="font-medium">{data.name}</p>
+                        <p className="text-xs text-muted-foreground">Precisión: {data.accuracy}%</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
               
               <div className="text-center mt-6">
