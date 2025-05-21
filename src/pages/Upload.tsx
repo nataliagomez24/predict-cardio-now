@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Upload, FileText, CircleCheck, CircleX } from "lucide-react";
+import { UploadIcon, FileText, CircleCheck, CircleX } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -110,7 +110,7 @@ const Upload = () => {
               ) : (
                 <>
                   <div className="h-12 w-12 rounded-full bg-cardio-primary/20 flex items-center justify-center mx-auto">
-                    <Upload className="h-6 w-6 text-cardio-primary" />
+                    <UploadIcon className="h-6 w-6 text-cardio-primary" />
                   </div>
                   <div>
                     <p className="font-medium">Arrastra y suelta tu archivo aquí</p>
