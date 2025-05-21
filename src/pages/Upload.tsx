@@ -3,9 +3,11 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { UploadIcon, FileText, CircleCheck, CircleX } from "lucide-react";
+import { UploadIcon, FileText, CircleCheck, CircleX, Database } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import ManualDataInput from "@/components/ManualDataInput";
 
 const Upload = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -72,102 +74,126 @@ const Upload = () => {
     }, 1500);
   };
 
+  const handleManualDataSubmit = (data: any) => {
+    console.log("Datos manuales enviados:", data);
+    // Los datos ya son procesados dentro del componente ManualDataInput
+  };
+
   return (
     <div className="max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6 text-center">Subir Dataset</h1>
+      <h1 className="text-3xl font-bold mb-6 text-center">Datos para Análisis</h1>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-center">Carga tus datos para análisis</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div
-            className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-              isDragging 
-                ? "border-cardio-primary bg-cardio-primary/10" 
-                : file 
-                  ? "border-cardio-accent bg-cardio-accent/10" 
-                  : "border-gray-300 hover:border-cardio-primary"
-            }`}
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
-          >
-            <div className="space-y-4">
-              {file ? (
-                <div className="flex flex-col items-center space-y-2">
-                  <div className="h-12 w-12 rounded-full bg-cardio-accent/20 flex items-center justify-center">
-                    <CircleCheck className="h-8 w-8 text-cardio-accent" />
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <FileText className="h-5 w-5 text-cardio-primary" />
-                    <span className="font-medium">{file.name}</span>
-                  </div>
-                  <span className="text-sm text-muted-foreground">
-                    Tamaño: {(file.size / 1024).toFixed(2)} KB
-                  </span>
-                </div>
-              ) : (
-                <>
-                  <div className="h-12 w-12 rounded-full bg-cardio-primary/20 flex items-center justify-center mx-auto">
-                    <UploadIcon className="h-6 w-6 text-cardio-primary" />
-                  </div>
+      <Tabs defaultValue="upload" className="mb-6">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="upload" className="flex items-center justify-center gap-2">
+            <UploadIcon className="h-4 w-4" />
+            <span>Subir Dataset</span>
+          </TabsTrigger>
+          <TabsTrigger value="manual" className="flex items-center justify-center gap-2">
+            <Database className="h-4 w-4" />
+            <span>Datos Manuales</span>
+          </TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="upload">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-center">Carga tu dataset para análisis</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div
+                className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+                  isDragging 
+                    ? "border-cardio-primary bg-cardio-primary/10" 
+                    : file 
+                      ? "border-cardio-accent bg-cardio-accent/10" 
+                      : "border-gray-300 hover:border-cardio-primary"
+                }`}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+              >
+                <div className="space-y-4">
+                  {file ? (
+                    <div className="flex flex-col items-center space-y-2">
+                      <div className="h-12 w-12 rounded-full bg-cardio-accent/20 flex items-center justify-center">
+                        <CircleCheck className="h-8 w-8 text-cardio-accent" />
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <FileText className="h-5 w-5 text-cardio-primary" />
+                        <span className="font-medium">{file.name}</span>
+                      </div>
+                      <span className="text-sm text-muted-foreground">
+                        Tamaño: {(file.size / 1024).toFixed(2)} KB
+                      </span>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="h-12 w-12 rounded-full bg-cardio-primary/20 flex items-center justify-center mx-auto">
+                        <UploadIcon className="h-6 w-6 text-cardio-primary" />
+                      </div>
+                      <div>
+                        <p className="font-medium">Arrastra y suelta tu archivo aquí</p>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          o haz clic para seleccionar un archivo
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-4">
+                          Archivos soportados: .xlsx, .xls, .csv
+                        </p>
+                      </div>
+                    </>
+                  )}
                   <div>
-                    <p className="font-medium">Arrastra y suelta tu archivo aquí</p>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      o haz clic para seleccionar un archivo
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-4">
-                      Archivos soportados: .xlsx, .xls, .csv
-                    </p>
+                    <Input
+                      type="file"
+                      className="hidden"
+                      id="file-upload"
+                      onChange={handleFileChange}
+                      accept=".xlsx,.xls,.csv"
+                    />
+                    <Button
+                      variant="outline"
+                      className="mt-2"
+                      onClick={() => document.getElementById("file-upload")?.click()}
+                    >
+                      {file ? "Cambiar archivo" : "Seleccionar archivo"}
+                    </Button>
                   </div>
-                </>
-              )}
-              <div>
-                <Input
-                  type="file"
-                  className="hidden"
-                  id="file-upload"
-                  onChange={handleFileChange}
-                  accept=".xlsx,.xls,.csv"
-                />
-                <Button
-                  variant="outline"
-                  className="mt-2"
-                  onClick={() => document.getElementById("file-upload")?.click()}
-                >
-                  {file ? "Cambiar archivo" : "Seleccionar archivo"}
-                </Button>
+                </div>
               </div>
-            </div>
-          </div>
 
-          {file && (
-            <div className="flex justify-between">
-              <Button
-                variant="outline"
-                onClick={() => setFile(null)}
-              >
-                <CircleX className="mr-2 h-4 w-4" />
-                Eliminar
-              </Button>
-              <Button 
-                onClick={handleUpload} 
-                disabled={isUploading}
-                className="bg-cardio-primary hover:bg-cardio-dark"
-              >
-                {isUploading ? "Procesando..." : "Procesar Datos"}
-              </Button>
-            </div>
-          )}
+              {file && (
+                <div className="flex justify-between">
+                  <Button
+                    variant="outline"
+                    onClick={() => setFile(null)}
+                  >
+                    <CircleX className="mr-2 h-4 w-4" />
+                    Eliminar
+                  </Button>
+                  <Button 
+                    onClick={handleUpload} 
+                    disabled={isUploading}
+                    className="bg-cardio-primary hover:bg-cardio-dark"
+                  >
+                    {isUploading ? "Procesando..." : "Procesar Datos"}
+                  </Button>
+                </div>
+              )}
 
-          <div className="border rounded-lg p-4 bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800">
-            <p className="text-sm text-amber-800 dark:text-amber-200">
-              <span className="font-medium">Importante:</span> El dataset debe incluir columnas como edad, sexo, presión arterial, colesterol, frecuencia cardíaca y otros factores de riesgo cardiovascular para obtener resultados precisos.
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+              <div className="border rounded-lg p-4 bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800">
+                <p className="text-sm text-amber-800 dark:text-amber-200">
+                  <span className="font-medium">Importante:</span> El dataset debe incluir columnas como edad, sexo, presión arterial, colesterol, frecuencia cardíaca y otros factores de riesgo cardiovascular para obtener resultados precisos.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="manual">
+          <ManualDataInput onDataSubmit={handleManualDataSubmit} />
+        </TabsContent>
+      </Tabs>
 
       <div className="mt-6 text-sm text-muted-foreground">
         <p className="mb-2"><strong>Ejemplo de formato esperado:</strong></p>
